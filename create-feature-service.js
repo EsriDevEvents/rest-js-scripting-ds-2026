@@ -9,7 +9,7 @@ import { searchItems, removeItem, getSelf } from "@esri/arcgis-rest-portal";
 const token = process.env.ACCESS_TOKEN
 const serviceName = process.env.FEATURE_SERVICE_NAME
 
-const spinner = ora();
+const reporter = ora();
 
 if(!token) {
   throw new Error(
@@ -26,7 +26,7 @@ const getIdentity = async () => {
 
 // Check for an existing item and delete if it exists. Allows re-running this demo continuously without additional cleanup 
 const removeItems = async (authentication) => {
-  spinner.start("Checking for existing items");
+  reporter.start("Checking for existing items");
 
   const existingItems = await searchItems({
     q: `title:${serviceName} AND owner:"${authentication.username}"`,
@@ -34,10 +34,10 @@ const removeItems = async (authentication) => {
   })
 
   if (existingItems.results.length > 0) {
-    spinner.succeed(`${existingItems.results.length} item(s) found`)
+    reporter.succeed(`${existingItems.results.length} item(s) found`)
     await Promise.all([
       existingItems.results.map(({ id, title, type }) => {
-        spinner.start(`Deleting ${type} ${id} with title ${title}`)
+        reporter.start(`Deleting ${type} ${id} with title ${title}`)
         // console.log(`\nDeleting ${type} ${id} with title ${title}`)
         return removeItem({ id, authentication })
       }),
@@ -46,18 +46,18 @@ const removeItems = async (authentication) => {
     // wait to allow time for the items to be deleted
     await new Promise(r => setTimeout(r, 2000));
 
-    spinner.succeed(chalk.red(`Deleted ${existingItems.results.length} existing items`));
+    reporter.succeed(chalk.red(`Deleted ${existingItems.results.length} existing items`));
   } else {
-    spinner.warn(chalk.yellow("No existing items found"));
+    reporter.warn(chalk.yellow("No existing items found"));
   }
 }
 
 const createNewService = async () => {
-  spinner.start("Authenticating");
+  reporter.start("Authenticating");
 
 
   const auth = await getIdentity()
-  spinner.succeed(`Logged in as ${auth.username}`);
+  reporter.succeed(`Logged in as ${auth.username}`);
   await removeItems(auth)
 
   const portalSelf = await getSelf({ authentication: auth })
@@ -178,7 +178,7 @@ const createNewService = async () => {
       },
     ]
 
-    spinner.start(chalk.blue("Creating new feature service"));
+    reporter.start(chalk.blue("Creating new feature service"));
 
     try {
       const newService = await createFeatureService({
@@ -198,23 +198,23 @@ const createNewService = async () => {
           spatialReference: { wkid: 4326 },
         },
       })
-      spinner.succeed(`Feature service ${newService.itemId} created`)
+      reporter.succeed(`Feature service ${newService.itemId} created`)
 
-      spinner.start(`Adding schema`);
+      reporter.start(`Adding schema`);
 
       // create layer
       const newFeatureLayer = await addToServiceDefinition(newService.serviceurl, {
         authentication: auth,
         layers: layerSchema,
       })
-      spinner.succeed(`Added ${newFeatureLayer.layers[0].name} to feature service`)
+      reporter.succeed(`Added ${newFeatureLayer.layers[0].name} to feature service`)
 
       console.log(
         chalk.green.bold("\nView feature service:\n"),
         chalk.green(`https://${portalSelf.urlKey}.maps.arcgis.com/home/item.html?id=${newService.itemId}`)
       )
     } catch (error) {
-      spinner.fail(error.message);
+      reporter.fail(error.message);
     }
 }
 
