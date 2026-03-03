@@ -7,6 +7,14 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "node -r dotenv/config index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@esri/arcgis-rest-feature-service": "^4.9.1",
+    "@esri/arcgis-rest-portal": "^4.9.1",
+    "chalk": "^5.6.2",
+    "dotenv": "^17.3.1",
+    "ora": "^9.3.0"
   }
 }

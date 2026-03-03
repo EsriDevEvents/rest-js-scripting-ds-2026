@@ -5,9 +5,6 @@ import { ArcGISIdentityManager } from "@esri/arcgis-rest-request";
 import { createFeatureService, addToServiceDefinition } from "@esri/arcgis-rest-feature-service";
 import { searchItems, removeItem, getSelf } from "@esri/arcgis-rest-portal";
 
-
-// Authenticate with API key. Key must be scoped to proper privileges. Learn more at https://developers.arcgis.com/documentation/security-and-authentication/api-key-authentication/
-
 // Get environment variables from the .env file. Loading this file is handled by the dotenv package
 const token = process.env.ACCESS_TOKEN
 const serviceName = process.env.FEATURE_SERVICE_NAME
@@ -30,7 +27,6 @@ const getIdentity = async () => {
 // Check for an existing item and delete if it exists. Allows re-running this demo continuously without additional cleanup 
 const removeItems = async (authentication) => {
   spinner.start("Checking for existing items");
-  // console.log(chalk.blue("\nChecking for existing items"))
 
   const existingItems = await searchItems({
     q: `title:${serviceName} AND owner:"${authentication.username}"`,
@@ -51,16 +47,15 @@ const removeItems = async (authentication) => {
     await new Promise(r => setTimeout(r, 2000));
 
     spinner.succeed(chalk.red(`Deleted ${existingItems.results.length} existing items`));
-    // console.log(chalk.red(`\nDeleted ${existingItems.results.length} existing items`))
   } else {
     spinner.warn(chalk.yellow("No existing items found"));
-    // console.log(chalk.yellow("\nNo existing items found"));
   }
 }
 
 const createNewService = async () => {
-  spinner.start("Logging into portal");
-  // log into portal
+  spinner.start("Authenticating");
+
+
   const auth = await getIdentity()
   spinner.succeed(`Logged in as ${auth.username}`);
   await removeItems(auth)
@@ -185,7 +180,6 @@ const createNewService = async () => {
 
     spinner.start(chalk.blue("Creating new feature service"));
 
-    // create new feature service
     try {
       const newService = await createFeatureService({
         authentication: auth,
