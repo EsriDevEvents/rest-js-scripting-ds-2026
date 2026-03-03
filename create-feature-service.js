@@ -17,7 +17,7 @@ if(!token) {
   )
 }
 
-// Instantiate ArcGIS REST JS IdentityManager with API key
+// Instantiate ArcGIS REST JS IdentityManager with token
 const getIdentity = async () => {
   return await ArcGISIdentityManager.fromToken({ 
     token
@@ -155,6 +155,16 @@ const createNewService = async () => {
             domain: null,
             defaultValue: null,
             length: 256,
+          },
+          {
+            name: "elevation",
+            type: "esriFieldTypeInteger",
+            alias: "elevation",
+            sqlType: "sqlTypeInteger",
+            nullable: true,
+            editable: true,
+            domain: null,
+            defaultValue: null,
           },
         ],
         templates: [

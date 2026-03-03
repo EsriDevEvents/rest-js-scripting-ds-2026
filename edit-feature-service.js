@@ -3,7 +3,7 @@ import chalk from "chalk"
 import ora from "ora"
 import { ArcGISIdentityManager } from "@esri/arcgis-rest-request"
 import { addFeatures, deleteFeatures } from "@esri/arcgis-rest-feature-service"
-import { getItemData, getItem, searchItems } from "@esri/arcgis-rest-portal"
+import { searchItems } from "@esri/arcgis-rest-portal"
 
 // Get environment variables from the .env file. Loading this file is handled by the dotenv package
 const token = process.env.ACCESS_TOKEN
@@ -22,7 +22,7 @@ const getRandomInRange = (from, to, fixed) => {
 
 const getRandomRating = () => {
   const ratings = ["Great", "Awesome", "Excellent", "Unbelieveable", "Wow", "Cowabunga"]
-  return ratings[Math.floor]
+  return ratings[Math.floor(Math.random() * ratings.length)]
 }
 
 const generateFeatures = count => {
