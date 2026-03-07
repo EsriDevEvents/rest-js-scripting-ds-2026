@@ -94,6 +94,6 @@ try {
   })
   reporter.succeed(`${addResponse.addResults.length} new features added`)
   console.log(chalk.green(`View in map: https://www.arcgis.com/apps/mapviewer/index.html?url=${serviceUrl}&source=sd`))
-} catch (error){
+} catch (error) {
   reporter.fail(error.message)
 }

@@ -50,7 +50,7 @@ try {
   reporter.succeed(`${features.length} features found`)
 
   reporter.start("Formatting coordinates")
- 
+
   // Format feature geometry as coordinate [x, y]
   const coordinates = features.map(({ geometry }) => [geometry.x, geometry.y])
 
@@ -64,32 +64,30 @@ try {
     authentication,
   })
 
-  reporter.stopAndPersist({ text: `Elevation found for ${elevationServiceResponse.result.points.length} points`, symbol: "⛰️ " });
-
+  reporter.stopAndPersist({ text: `Elevation found for ${elevationServiceResponse.result.points.length} points`, symbol: "⛰️ " })
 
   reporter.start(`Updating ${serviceName}`)
 
   // Merge feature data with the updated geometry
   const featuresWithElevation = features.map(feature => {
-    const geometry = elevationServiceResponse.result.points.find(point => point.x === feature.geometry.x && point.y === feature.geometry.y);
+    const geometry = elevationServiceResponse.result.points.find(point => point.x === feature.geometry.x && point.y === feature.geometry.y)
     const attributes = { ...feature.attributes, elevation: geometry.z }
-    return {...feature, attributes, geometry}
-  });
+    return { ...feature, attributes, geometry }
+  })
 
   // Update the feature service
   const fsResponse = await updateFeatures({
     url: serviceUrl,
     features: featuresWithElevation,
-    authentication
+    authentication,
   })
 
-
-  const updatedFeatures = fsResponse.updateResults.filter(result => result.success === true);
+  const updatedFeatures = fsResponse.updateResults.filter(result => result.success === true)
   reporter.stopAndPersist({ text: `${updatedFeatures.length} features updated`, symbol: "🌎" })
   console.log(chalk.green(`View in map: https://www.arcgis.com/apps/mapviewer/index.html?url=${serviceUrl}&source=sd`))
 
   if (fsResponse.updateResults.length !== features.length) {
-    console.log(chalk.red("Some features did not update successfully:"));
+    console.log(chalk.red("Some features did not update successfully:"))
     console.log(fsResponse.updateResults.filter(result => result.success === false))
   }
 } catch (error) {
