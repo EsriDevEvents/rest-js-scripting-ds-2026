@@ -59,6 +59,9 @@ try {
     authentication,
   })
 
+  if (!searchResponse.results) {
+    reporter.fail("Item not found");
+  }
   // Get the item from search response
   const item = searchResponse.results[0]
   reporter.start("Verifying item type")
